@@ -13,6 +13,7 @@ docs = {
     "spec.txt": "These specifications define the technical requirements for the equipment.",
 }
 
+# A tool to reads a document.
 @mcp.tool(
     name="read_doc",
     description="Read the contents of the document and return it as a string"
@@ -25,8 +26,7 @@ def read_document(
 
     return docs[doc_id]
 
-# TODO: Write a tool to edit a doc
-
+# A tool to edit a document
 @mcp.tool(
     name = "edit_doc",
     description = "Edit a document by replacing the contents with a new string"    
