@@ -29,10 +29,12 @@ async def main():
     server_scripts = sys.argv[1:]
     clients = {}
 
+    # Use the current Python interpreter to avoid uv SSL issues
+    python_executable = sys.executable
     command, args = (
         ("uv", ["run", "mcp_server.py"])
         if os.getenv("USE_UV", "0") == "1"
-        else ("python", ["mcp_server.py"])
+        else (python_executable, ["mcp_server.py"])
     )
 
     async with AsyncExitStack() as stack:
@@ -44,7 +46,10 @@ async def main():
         for i, server_script in enumerate(server_scripts):
             client_id = f"client_{i}_{server_script}"
             client = await stack.enter_async_context(
-                MCPClient(command="uv", args=["run", server_script])
+                MCPClient(
+                    command=python_executable if os.getenv("USE_UV", "0") != "1" else "uv",
+                    args=[server_script] if os.getenv("USE_UV", "0") != "1" else ["run", server_script]
+                )
             )
             clients[client_id] = client
 
